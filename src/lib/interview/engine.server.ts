@@ -173,8 +173,8 @@ function fallbackFeedback(): Feedback {
 
 export async function runInterviewTurn(input: {
   sessionId: string;
-  candidate?: unknown;
-  message?: string;
+  candidate?: unknown | undefined;
+  message?: string | undefined;
 }): Promise<InterviewResponse> {
   const supabase = db();
   const { sessionId } = input;
