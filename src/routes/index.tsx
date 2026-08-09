@@ -117,7 +117,7 @@ function Index() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-8 md:px-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col overflow-x-clip px-5 py-8 md:px-8">
       <Toaster position="top-center" />
 
       {!sessionId && <Navbar onStart={goToCandidates} />}
