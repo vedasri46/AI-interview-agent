@@ -35,7 +35,7 @@ export function Hero({ onStart, onExplore }: { onStart: () => void; onExplore: (
       </div>
 
       <div className="relative animate-rise">
-        <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-tr from-primary/15 via-transparent to-[oklch(0.6_0.18_290)]/20 blur-2xl" />
+        <div className="pointer-events-none absolute inset-x-0 -inset-y-6 rounded-[2.5rem] bg-gradient-to-tr from-primary/15 via-transparent to-[oklch(0.6_0.18_290)]/20 blur-2xl" />
         <div className="glass-panel relative rounded-3xl p-5 shadow-2xl shadow-background/50">
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <span className="size-2.5 rounded-full bg-destructive/70" />
