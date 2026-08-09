@@ -6,6 +6,15 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Toaster } from "@/components/ui/sonner";
+import { Navbar } from "@/components/home/Navbar";
+import { Hero } from "@/components/home/Hero";
+import {
+  ExperiencePreview,
+  Features,
+  FinalCta,
+  HowItWorks,
+  Stats,
+} from "@/components/home/Sections";
 import { interviewTurn, listCandidates } from "@/lib/interview.functions";
 
 export const Route = createFileRoute("/")({
@@ -103,10 +112,17 @@ function Index() {
     setInput("");
   }
 
+  function goToCandidates() {
+    document.getElementById("candidates")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-8 md:px-8">
       <Toaster position="top-center" />
 
+      {!sessionId && <Navbar onStart={goToCandidates} />}
+
+      {sessionId && (
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground">
@@ -119,37 +135,36 @@ function Index() {
             </p>
           </div>
         </div>
-        {sessionId && (
-          <button
-            onClick={reset}
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            <RotateCcw className="size-4" /> New interview
-          </button>
-        )}
+        <button
+          onClick={reset}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
+        >
+          <RotateCcw className="size-4" /> New interview
+        </button>
       </header>
+      )}
 
       {!sessionId ? (
-        <section className="mt-10 animate-rise">
-          <h2 className="max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
-            A technical interview built from{" "}
-            <span className="text-primary">what you actually shipped</span>.
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
+        <div>
+          <Hero onStart={goToCandidates} onExplore={goToCandidates} />
+          <Features />
+          <HowItWorks />
+          <ExperiencePreview />
+          <Stats />
+
+          <section id="candidates" className="scroll-mt-24 py-14 md:py-20">
+          <h2 className="text-2xl font-bold md:text-4xl">Choose a candidate</h2>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
             Nova reads a learner's cohort record — completed missions, retry counts, skipped days — and
             runs an adaptive, multi-turn interview with follow-ups, then closes with structured feedback.
           </p>
-
-          <h3 className="mt-10 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            Choose a candidate
-          </h3>
 
           {isPending ? (
             <div className="mt-6 flex items-center gap-2 text-muted-foreground">
               <Loader2 className="size-4 animate-spin" /> Loading cohort…
             </div>
           ) : (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {people?.map((p) => (
                 <button
                   key={p.id}
@@ -194,7 +209,10 @@ POST /api/interview
      "feedback": { "summary": "...", "strengths": [], "gaps": [], "next": [] } }`}
             </pre>
           </div>
-        </section>
+          </section>
+
+          <FinalCta onStart={goToCandidates} />
+        </div>
       ) : (
         <section className="mt-6 flex flex-1 flex-col">
           {active && (
