@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Loader2, RotateCcw, Send, Sparkles } from "lucide-react";
+import { ArrowRight, Download, Loader2, RotateCcw, Send, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,6 +16,9 @@ import {
   Stats,
 } from "@/components/home/Sections";
 import { interviewTurn, listCandidates } from "@/lib/interview.functions";
+import { SummaryCharts } from "@/components/summary/SummaryCharts";
+import { buildAnalytics, type FeedbackShape } from "@/lib/summary-analytics";
+import { downloadSummaryPdf } from "@/lib/summary-pdf";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,7 +39,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Feedback = { summary: string; strengths: string[]; gaps: string[]; next: string[] };
+type Feedback = FeedbackShape;
 type Turn = { role: "assistant" | "user"; content: string };
 
 function Index() {
@@ -256,7 +259,16 @@ POST /api/interview
               </div>
             )}
 
-            {feedback && <FeedbackCard feedback={feedback} />}
+            {feedback && (
+              <FeedbackCard
+                feedback={feedback}
+                meta={{
+                  name: active?.name,
+                  role: active?.jobRole,
+                  sessionId: sessionId ?? undefined,
+                }}
+              />
+            )}
             <div ref={endRef} />
           </div>
 
@@ -306,16 +318,55 @@ function Chip({ children, tone }: { children: React.ReactNode; tone?: "warn" }) 
   );
 }
 
-function FeedbackCard({ feedback }: { feedback: Feedback }) {
+function FeedbackCard({
+  feedback,
+  meta,
+}: {
+  feedback: Feedback;
+  meta: { name?: string | undefined; role?: string | undefined; sessionId?: string | undefined };
+}) {
   const sections: { label: string; items: string[] }[] = [
     { label: "Strengths", items: feedback.strengths },
     { label: "Gaps", items: feedback.gaps },
     { label: "Next steps", items: feedback.next },
   ];
+  const analytics = buildAnalytics(feedback);
   return (
     <div className="glass-panel animate-rise rounded-2xl border-primary/40 p-5">
-      <h2 className="text-lg font-bold">Interview feedback</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-bold">Interview feedback</h2>
+        <button
+          onClick={() => downloadSummaryPdf(feedback, analytics, meta)}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+        >
+          <Download className="size-4" /> Download summary
+        </button>
+      </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feedback.summary}</p>
+
+      {analytics.scores && (
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          {(
+            [
+              ["Overall", analytics.scores.overall],
+              ["Technical", analytics.scores.technical],
+              ["Communication", analytics.scores.communication],
+              ["Confidence", analytics.scores.confidence],
+              ["Problem solving", analytics.scores.problemSolving],
+            ] as const
+          ).map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-border bg-surface-raised/40 p-3">
+              <p className="font-display text-2xl font-bold text-primary">{value}</p>
+              <p className="mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {analytics.hasData && <SummaryCharts analytics={analytics} />}
+
       <div className="mt-5 grid gap-5 md:grid-cols-3">
         {sections.map((s) => (
           <div key={s.label}>

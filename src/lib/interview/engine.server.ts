@@ -14,6 +14,21 @@ export type Feedback = {
   strengths: string[];
   gaps: string[];
   next: string[];
+  scores?: {
+    overall: number;
+    technical: number;
+    communication: number;
+    confidence: number;
+    problemSolving: number;
+  };
+  questions?: {
+    n: number;
+    day: number | null;
+    topic: string;
+    verdict: "strong" | "partial" | "weak" | "unanswered";
+    score: number;
+  }[];
+  topics?: { topic: string; score: number }[];
 };
 
 export type InterviewResponse = {
@@ -92,9 +107,27 @@ When finishing, use:
     "summary": "3-5 sentence assessment of technical depth, communication, and interview readiness",
     "strengths": ["concise, specific, evidence-based points"],
     "gaps": ["concise, specific weaknesses observed"],
-    "next": ["concrete actionable next steps, e.g. specific topics to revisit or drills to run"]
+    "next": ["concrete actionable next steps, e.g. specific topics to revisit or drills to run"],
+    "scores": {
+      "overall": 0-100,
+      "technical": 0-100,
+      "communication": 0-100,
+      "confidence": 0-100,
+      "problemSolving": 0-100
+    },
+    "questions": [
+      {
+        "n": 1,
+        "day": <curriculum day the question targeted, or null>,
+        "topic": "short topic label for that question",
+        "verdict": "strong" | "partial" | "weak" | "unanswered",
+        "score": 0-100
+      }
+    ],
+    "topics": [{ "topic": "topic actually covered", "score": 0-100 }]
   }
-}`;
+}
+Scoring rules: grade ONLY from what the candidate actually said in this conversation. Include one "questions" entry for every question you asked, in order. "topics" must only list topics actually discussed, scored as the average of the related answers. Never invent questions, topics, or scores.`;
 }
 
 type ModelTurn = {
