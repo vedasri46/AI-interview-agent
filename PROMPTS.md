@@ -182,10 +182,6 @@ The interviewer should sound natural rather than scripted.
 
 Integrate the Lovable AI Gateway into the interview engine for AI-powered interviewer response generation.
 
-Use the Lovable AI Gateway chat completions endpoint:
-
-https://ai.gateway.lovable.dev/v1/chat/completions
-
 Authenticate requests using the server-side environment variable:
 
 LOVABLE_API_KEY
