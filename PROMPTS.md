@@ -356,6 +356,24 @@ Only the variable name may be documented.
 
 ---
 
+## Prompt 16 — Interview Summary Analytics & Download
+
+Enhance the existing Interview Summary without changing its current structure, sections, layout, scoring, or functionality.
+
+Add:
+- Pie/donut charts for performance breakdown
+- Graphs for question-wise and topic/skill-wise performance
+- Use only actual interview data; never hardcode scores
+- Keep all existing Summary components unchanged
+- Match the existing UI/design
+- Add a "Download Summary" button to export the completed interview summary as a professional PDF
+- Include existing scores, feedback, recommendations, and the new charts in the PDF
+- Ensure the charts and PDF update correctly for each interview session
+
+This is an additive enhancement only. Do not redesign or rebuild the existing Summary page.
+
+---
+
 ## Final Testing
 
 Test the complete flow:
